@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Holograma Sistema Solar</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+    <script type="module">
+        import { PeppersGhostEffect } from './PeppersGhostEffect.js';
+
+        // Our Javascript will go here.
+        //We need: scene, camera and render
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        //containers
+        var sunC = new THREE.Object3D();
+        var earthC = new THREE.Object3D();
+        var effect;
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        //Textures
+        var loader = new THREE.TextureLoader();
+        var texture = loader.load("textura.jpg");
+        var material = new THREE.MeshStandardMaterial({
+            map: texture
+        });
+        var texture2 = loader.load("texSun.jpg");
+        var material2 = new THREE.MeshBasicMaterial({
+            map: texture2
+        });
+        var texture3 = loader.load("texMoon.jpg");
+        var material3 = new THREE.MeshStandardMaterial({
+            map: texture3
+        });
+
+        //Objects
+        var geometry = new THREE.SphereGeometry(10, 32, 32);
+        var sunO = new THREE.Mesh(geometry, material2);
+        var geometry2 = new THREE.SphereGeometry(1, 32, 32);
+        var earthO = new THREE.Mesh(geometry2, material);
+        var geometry3 = new THREE.SphereGeometry(0.5, 32, 32);
+        var moonO = new THREE.Mesh(geometry3, material3);
+
+        //Line
+        var material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+
+        //Lights
+        var light = new THREE.PointLight(0xffffff, 1);
+        light.position.set(0, 50, 0);
+
+        //effect
+        effect = new PeppersGhostEffect(renderer);
+        effect.setSize(window.innerWidth, window.innerHeight);
+        effect.cameraDistance = 50;
+
+        window.addEventListener('resize', onWindowResize, false);
+
+        //scene
+        scene.add(light);
+
+        sunC.add(sunO);
+        earthC.add(earthO);
+        earthC.add(moonO);
+        sunC.add(earthC);
+
+        moonO.position.x = 2;
+
+        scene.add(sunC);
+        scene.add();
+
+        var t = 0.0;
+
+        //To see, we need render. Render or animate loop:
+        function animate() {
+            requestAnimationFrame(animate);
+
+            animateObjects(t);
+
+            t += 0.01;
+
+            //movement
+            effect.render(scene, camera);
+        }
+
+        function animateObjects(t) {
+            rotate(sunO, 0.01);
+            rotate(earthO, 0.01);
+            rotate(moonO, 0.01);
+            translate(earthC, t, 20);
+            translate(moonO, 10 * t, 5);
+        }
+
+        function rotate(object, speed) {
+            object.rotation.y += speed;
+        }
+
+        function translate(object, t, r) {
+            object.position.x = r * Math.cos(t);
+            object.position.z = r * Math.sin(t);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            effect.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        //animation
+        animate();
+    </script>
+</body>
+
+</html>
