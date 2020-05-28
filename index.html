@@ -37,7 +37,7 @@
         //Textures
         var loader = new THREE.TextureLoader();
         var texture = loader.load("textura.jpg");
-        var material = new THREE.MeshStandardMaterial({
+        var material = new THREE.MeshBasicMaterial({
             map: texture
         });
         var texture2 = loader.load("texSun.jpg");
@@ -45,16 +45,16 @@
             map: texture2
         });
         var texture3 = loader.load("texMoon.jpg");
-        var material3 = new THREE.MeshStandardMaterial({
+        var material3 = new THREE.MeshBasicMaterial({
             map: texture3
         });
 
         //Objects
         var geometry = new THREE.SphereGeometry(10, 32, 32);
         var sunO = new THREE.Mesh(geometry, material2);
-        var geometry2 = new THREE.SphereGeometry(1, 32, 32);
+        var geometry2 = new THREE.SphereGeometry(2, 32, 32);
         var earthO = new THREE.Mesh(geometry2, material);
-        var geometry3 = new THREE.SphereGeometry(0.5, 32, 32);
+        var geometry3 = new THREE.SphereGeometry(1, 32, 32);
         var moonO = new THREE.Mesh(geometry3, material3);
 
         //Line
@@ -62,7 +62,7 @@
 
         //Lights
         var light = new THREE.PointLight(0xffffff, 1);
-        light.position.set(0, 50, 0);
+        light.position.set(0, 0, 0);
 
         //effect
         effect = new PeppersGhostEffect(renderer);
